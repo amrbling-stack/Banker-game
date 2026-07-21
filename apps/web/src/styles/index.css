@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply font-body min-h-screen;
+    background-image:
+      radial-gradient(circle at 20% 0%, rgba(212, 175, 106, 0.08), transparent 40%),
+      radial-gradient(circle at 100% 100%, rgba(26, 77, 58, 0.06), transparent 45%);
+  }
+
+  h1, h2, h3 {
+    @apply font-display;
+  }
+
+  /* Visible keyboard focus everywhere, not just on inputs. */
+  :focus-visible {
+    outline: 2px solid theme("colors.gold.500");
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-card bg-ledger-900 px-5 py-3
+           text-parchment-50 font-body font-medium tracking-wide
+           active:scale-[0.98] transition
+           disabled:opacity-40 disabled:pointer-events-none
+           hover:bg-ledger-800;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-card border border-ledger-900/20
+           bg-transparent px-5 py-3 text-ledger-900 font-body font-medium tracking-wide
+           active:scale-[0.98] transition
+           disabled:opacity-40 disabled:pointer-events-none
+           hover:bg-ledger-900/5;
+  }
+
+  .field-input {
+    @apply w-full rounded-card border border-ledger-900/20 bg-parchment-50 px-4 py-3
+           text-ledger-950 placeholder:text-ledger-950/40
+           focus:border-gold-500 focus:outline-none;
+  }
+
+  .card {
+    @apply rounded-card border border-ledger-900/10 bg-white/70 p-5 shadow-sm backdrop-blur-sm;
+  }
+}
