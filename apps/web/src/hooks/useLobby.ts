@@ -14,12 +14,6 @@ interface LobbyState {
   error: string | null;
 }
 
-/**
- * Live view of a single lobby: the game row plus every seated player,
- * kept in sync over Supabase Realtime so every device sees joins, leaves,
- * and the start-game transition as they happen — no polling, no manual
- * refresh needed at the table.
- */
 export function useLobby(gameId: string | null): LobbyState {
   const [state, setState] = useState<LobbyState>({
     game: null,
@@ -36,7 +30,7 @@ export function useLobby(gameId: string | null): LobbyState {
 
     let cancelled = false;
     setState((s) => ({ ...s, loading: true, error: null }));
-    const currentGameId = gameId; // narrow once: TS doesn't retain the null-check across the closure below
+    const currentGameId = gameId;
 
     async function loadInitial() {
       const [gameRes, playersRes] = await Promise.all([
@@ -75,7 +69,7 @@ export function useLobby(gameId: string | null): LobbyState {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "games", filter: `id=eq.${gameId}` },
-        (payload) => {
+        (payload: any) => {
           if (payload.eventType === "DELETE") return;
           setState((s) => ({ ...s, game: mapGame(payload.new as GameRow) }));
         },
@@ -83,7 +77,7 @@ export function useLobby(gameId: string | null): LobbyState {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "players", filter: `game_id=eq.${gameId}` },
-        (payload) => {
+        (payload: any) => {
           setState((s) => {
             if (payload.eventType === "DELETE") {
               const deletedId = (payload.old as { id?: string }).id;
