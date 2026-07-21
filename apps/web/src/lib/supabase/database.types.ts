@@ -13,6 +13,9 @@ export type RiskClassRow = "DEFENSIVE" | "CYCLICAL" | "SPECULATIVE" | "UTILITY";
 export type DevLevelRow = "KIOSK" | "SHOP" | "CHAIN" | "FIXED";
 
 export interface Database {
+  __InternalSupabase: {
+    PostgrestVersion: "12";
+  };
   public: {
     Tables: {
       games: {
@@ -32,7 +35,7 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
-        Insert: never; // writes only happen through RPCs
+        Insert: never;
         Update: never;
       };
       players: {
