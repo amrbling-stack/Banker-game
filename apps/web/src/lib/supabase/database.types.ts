@@ -130,6 +130,9 @@ export interface Database {
         Update: never;
       };
     };
+    Views: {
+      [_ in never]: never;
+    };
     Functions: {
       create_game: {
         Args: { p_display_name: string; p_user_id: string };
@@ -214,6 +217,12 @@ export interface Database {
         Args: { p_game_id: string };
         Returns: void;
       };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
     };
   };
 }
