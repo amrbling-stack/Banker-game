@@ -37,6 +37,7 @@ export interface Database {
         };
         Insert: never;
         Update: never;
+        Relationships: [];
       };
       players: {
         Row: {
@@ -54,6 +55,7 @@ export interface Database {
         };
         Insert: never;
         Update: never;
+        Relationships: [];
       };
       companies: {
         Row: {
@@ -92,6 +94,7 @@ export interface Database {
         };
         Insert: never;
         Update: never;
+        Relationships: [];
       };
       game_deeds: {
         Row: {
@@ -104,6 +107,7 @@ export interface Database {
         };
         Insert: never;
         Update: never;
+        Relationships: [];
       };
       ledger_entries: {
         Row: {
@@ -119,6 +123,7 @@ export interface Database {
         };
         Insert: never;
         Update: never;
+        Relationships: [];
       };
       news_deck: {
         Row: {
@@ -131,6 +136,7 @@ export interface Database {
         };
         Insert: never;
         Update: never;
+        Relationships: [];
       };
     };
     Views: {
