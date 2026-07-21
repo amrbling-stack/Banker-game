@@ -16,16 +16,11 @@ interface GameDataState {
   players: Player[];
   deeds: GameDeed[];
   ledger: LedgerEntry[];
-  news: NewsDeckCard[]; // drawn cards only, oldest first
+  news: NewsDeckCard[];
   loading: boolean;
   error: string | null;
 }
 
-/**
- * Live view of everything the play screen needs, kept in sync over
- * Supabase Realtime. Separate from Feature 1's `useLobby` on purpose —
- * that hook is done and stays untouched; this one covers the game phase.
- */
 export function useGameData(gameId: string | null): GameDataState {
   const [state, setState] = useState<GameDataState>({
     game: null,
@@ -45,7 +40,7 @@ export function useGameData(gameId: string | null): GameDataState {
 
     let cancelled = false;
     setState((s) => ({ ...s, loading: true, error: null }));
-    const currentGameId = gameId; // narrow once: TS doesn't retain the null-check across the closures below
+    const currentGameId = gameId;
 
     async function loadInitial() {
       const [gameRes, playersRes, deedsRes, ledgerRes, newsRes] = await Promise.all([
@@ -86,7 +81,7 @@ export function useGameData(gameId: string | null): GameDataState {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "games", filter: `id=eq.${gameId}` },
-        (payload) => {
+        (payload: any) => {
           if (payload.eventType === "DELETE") return;
           setState((s) => ({ ...s, game: mapGame(payload.new as GameRow) }));
         },
@@ -94,7 +89,7 @@ export function useGameData(gameId: string | null): GameDataState {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "players", filter: `game_id=eq.${gameId}` },
-        (payload) => {
+        (payload: any) => {
           setState((s) => {
             if (payload.eventType === "DELETE") {
               const deletedId = (payload.old as { id?: string }).id;
@@ -113,7 +108,7 @@ export function useGameData(gameId: string | null): GameDataState {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "game_deeds", filter: `game_id=eq.${gameId}` },
-        (payload) => {
+        (payload: any) => {
           setState((s) => {
             if (payload.eventType === "DELETE") {
               const deletedId = (payload.old as { id?: string }).id;
@@ -131,7 +126,7 @@ export function useGameData(gameId: string | null): GameDataState {
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "ledger_entries", filter: `game_id=eq.${gameId}` },
-        (payload) => {
+        (payload: any) => {
           const inserted = mapLedgerEntry(payload.new as LedgerEntryRow);
           setState((s) => ({ ...s, ledger: [...s.ledger, inserted].sort((a, b) => a.seq - b.seq) }));
         },
@@ -139,10 +134,10 @@ export function useGameData(gameId: string | null): GameDataState {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "news_deck", filter: `game_id=eq.${gameId}` },
-        (payload) => {
+        (payload: any) => {
           if (payload.eventType === "DELETE") return;
           const updated = mapNewsDeckCard(payload.new as NewsDeckRow);
-          if (!updated.drawn) return; // RLS already hides these, but stay defensive
+          if (!updated.drawn) return;
           setState((s) => {
             const exists = s.news.some((n) => n.id === updated.id);
             const next = exists
